@@ -1,0 +1,35 @@
+name: vigil-aem
+services:
+  postgres:
+    image: pgvector/pgvector:0.8.1-pg17
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER:-vigil_dev}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-vigil_dev_nonproduction_only}
+      POSTGRES_DB: ${POSTGRES_DB:-vigil_dev}
+    ports:
+      - "127.0.0.1:${POSTGRES_PORT:-5433}:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./scripts/init_pgvector.sql:/docker-entrypoint-initdb.d/01-pgvector.sql:ro
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U $$POSTGRES_USER -d $$POSTGRES_DB"]
+      interval: 5s
+      timeout: 3s
+      retries: 12
+    restart: "no"
+  mock-api:
+    image: python:3.11.13-slim
+    profiles: ["mock-api"]
+    command: ["python", "/app/mock_api_server.py"]
+    ports:
+      - "127.0.0.1:${MOCK_API_PORT:-8000}:8000"
+    volumes:
+      - ./scripts/mock_api_server.py:/app/mock_api_server.py:ro
+    read_only: true
+    cap_drop: ["ALL"]
+    security_opt: ["no-new-privileges:true"]
+    user: "65534:65534"
+    restart: "no"
+volumes:
+  postgres_data:
+
