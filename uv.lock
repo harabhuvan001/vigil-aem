@@ -2375,12 +2375,14 @@ name = "vigil-aem"
 version = "0.1.0"
 source = { editable = "." }
 dependencies = [
+    { name = "matplotlib" },
     { name = "mlflow" },
     { name = "numpy" },
     { name = "openai" },
     { name = "pandas" },
     { name = "pgvector" },
     { name = "psycopg", extra = ["binary"] },
+    { name = "pyarrow" },
     { name = "pydantic" },
     { name = "python-dotenv" },
     { name = "pyyaml" },
@@ -2407,12 +2409,14 @@ dev = [
 
 [package.metadata]
 requires-dist = [
+    { name = "matplotlib", specifier = "==3.11.2" },
     { name = "mlflow", specifier = ">=3.16.1" },
     { name = "numpy", specifier = ">=2.4.6" },
     { name = "openai", specifier = ">=3.24.0" },
     { name = "pandas", specifier = ">=3.0.6" },
     { name = "pgvector", specifier = ">=0.5.0" },
     { name = "psycopg", extras = ["binary"], specifier = ">=3.3.6" },
+    { name = "pyarrow", specifier = "==25.0.1" },
     { name = "pydantic", specifier = ">=2.13.5" },
     { name = "python-dotenv", specifier = ">=1.2.4" },
     { name = "pyyaml", specifier = ">=6.0.3" },

@@ -1,0 +1,52 @@
+{
+  "calibration": [
+    "skill-fs_truncate",
+    "skill-fs_move",
+    "skill-fs_replace",
+    "skill-api_patch",
+    "skill-api_delete",
+    "skill-api_refresh",
+    "skill-sql_delete",
+    "skill-sql_increment",
+    "skill-sql_update",
+    "skill-git_branch",
+    "skill-git_delete_branch",
+    "skill-git_unstage"
+  ],
+  "fit": [
+    "skill-fs_rmdir",
+    "skill-fs_delete",
+    "skill-fs_create",
+    "skill-api_page",
+    "skill-api_post",
+    "skill-api_get",
+    "skill-sql_swap",
+    "skill-sql_insert",
+    "skill-sql_clear",
+    "skill-git_switch",
+    "skill-git_tag",
+    "skill-git_delete_tag"
+  ],
+  "grouping": "source_skill_id",
+  "seed": 42,
+  "test": [
+    "skill-fs_append",
+    "skill-fs_copy",
+    "skill-api_put",
+    "skill-api_retry",
+    "skill-sql_flag",
+    "skill-sql_transfer",
+    "skill-git_restore",
+    "skill-git_stage"
+  ],
+  "validation": [
+    "skill-fs_write",
+    "skill-fs_mkdir",
+    "skill-api_redirect",
+    "skill-api_conditional_put",
+    "skill-sql_copy",
+    "skill-sql_rename",
+    "skill-git_commit",
+    "skill-git_remove"
+  ]
+}

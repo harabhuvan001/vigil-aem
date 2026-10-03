@@ -164,6 +164,22 @@ class SkillShiftFixture:
                 scopes[scope] = self._repos[scope].snapshot()
         return wrap(self.fixture.domain, scopes)
 
+    def observe(self) -> State:
+        """Detached logical observation; protection constraints live in the public task view."""
+        return self.snapshot()
+
+    def clone_state(self) -> State:
+        return self.snapshot()
+
+    def clone(self) -> Self:
+        """Independent fixture at identical initial state, for prospective verification."""
+        if self.snapshot() != self.fixture.initial_state:
+            raise ValueError("Clone verification from the reset initial state")
+        return type(self)(self.fixture)
+
+    def evaluate(self, task: TransferTask, action: str, *, executed: bool = True) -> Outcome:
+        return score(task, action, self.snapshot(), executed=executed)
+
     def execute(self, action: str) -> bool:
         if self._closed:
             raise RuntimeError("Fixture is closed")

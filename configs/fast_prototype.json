@@ -1,0 +1,15 @@
+{
+  "version": "fast-prototype-v1",
+  "seed": 42,
+  "epsilon": 0.1,
+  "similarity_threshold": 0.8,
+  "embedding_model": "sentence-transformers/all-MiniLM-L6-v2",
+  "embedding_revision": "1110a243fdf4706b3f48f1d95db1a4f5529b4d41",
+  "embedding_text_version": "goal-only-v1",
+  "prompt_version": "deterministic-goal-and-source-preference-v1",
+  "max_tool_steps": 1,
+  "bootstrap_repetitions": 2000,
+  "permutation_repetitions": 10000,
+  "verification_cost": 0.1,
+  "safe_rejection_cost": 0.1
+}

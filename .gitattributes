@@ -7,3 +7,5 @@ benchmark/skills/skills_v0.1.jsonl -text
 benchmark/transfer_tasks/skillshift_v0.1.jsonl -text
 benchmark/fixtures/skillshift_v0.1.jsonl -text
 benchmark/skillshift_v0.1.sha256 -text
+configs/fast_prototype_splits.json -text
+configs/fast_prototype_splits.sha256 -text

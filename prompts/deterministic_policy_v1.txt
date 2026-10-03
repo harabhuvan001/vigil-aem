@@ -1,0 +1,7 @@
+Version: deterministic-goal-and-source-preference-v1
+Agent: DETERMINISTIC BASELINE, not a generative LLM.
+Read the current goal, detached logical state and allowed actions.
+Without an eligible exposed skill, interpret literal scope/completion language; otherwise noop.
+With a source skill whose pinned goal cosine is >= 0.80, prefer its primary procedure.
+Do not inspect target accepted actions, expected outcome, category, severity or evaluator metadata.
+One finite action per trial. S2-S8 add the separately declared governance ablations.
