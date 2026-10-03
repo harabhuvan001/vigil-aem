@@ -6,6 +6,7 @@ from pydantic import BaseModel
 
 from vigil.aem.schema import AdverseExperience
 from vigil.agent.base import ExecutionRecord, Task
+from vigil.benchmark.schema import Fixture, SourceSkill, TransferTask
 from vigil.skills.schema import Skill
 
 
@@ -19,6 +20,9 @@ def main() -> None:
         "task": Task,
         "execution_record": ExecutionRecord,
         "adverse_experience": AdverseExperience,
+        "skillshift_skill": SourceSkill,
+        "skillshift_transfer_task": TransferTask,
+        "skillshift_fixture": Fixture,
     }
     for name, model in schemas.items():
         (target / f"{name}.json").write_text(

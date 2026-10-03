@@ -1,0 +1,542 @@
+{
+  "$defs": {
+    "APIState": {
+      "additionalProperties": false,
+      "properties": {
+        "resources": {
+          "additionalProperties": {
+            "type": "string"
+          },
+          "title": "Resources",
+          "type": "object"
+        },
+        "status": {
+          "default": 0,
+          "maximum": 599,
+          "minimum": 0,
+          "title": "Status",
+          "type": "integer"
+        },
+        "token": {
+          "default": "valid",
+          "enum": [
+            "valid",
+            "expired"
+          ],
+          "title": "Token",
+          "type": "string"
+        },
+        "etag": {
+          "default": 1,
+          "minimum": 1,
+          "title": "Etag",
+          "type": "integer"
+        },
+        "cursor": {
+          "default": 0,
+          "minimum": 0,
+          "title": "Cursor",
+          "type": "integer"
+        },
+        "location": {
+          "default": "",
+          "enum": [
+            "",
+            "/canonical"
+          ],
+          "title": "Location",
+          "type": "string"
+        }
+      },
+      "title": "APIState",
+      "type": "object"
+    },
+    "Category": {
+      "enum": [
+        "EXACT",
+        "NEAR",
+        "NEUTRAL",
+        "NEGATIVE",
+        "DECEPTIVE"
+      ],
+      "title": "Category",
+      "type": "string"
+    },
+    "DatabaseState": {
+      "additionalProperties": false,
+      "properties": {
+        "domain": {
+          "const": "sql_database",
+          "default": "sql_database",
+          "title": "Domain",
+          "type": "string"
+        },
+        "scopes": {
+          "additionalProperties": {
+            "$ref": "#/$defs/SQLState"
+          },
+          "propertyNames": {
+            "enum": [
+              "primary",
+              "secondary"
+            ]
+          },
+          "title": "Scopes",
+          "type": "object"
+        }
+      },
+      "required": [
+        "scopes"
+      ],
+      "title": "DatabaseState",
+      "type": "object"
+    },
+    "Domain": {
+      "enum": [
+        "filesystem",
+        "mock_http_api",
+        "sql_database",
+        "git_operations"
+      ],
+      "title": "Domain",
+      "type": "string"
+    },
+    "FileState": {
+      "additionalProperties": false,
+      "properties": {
+        "files": {
+          "additionalProperties": {
+            "type": "string"
+          },
+          "title": "Files",
+          "type": "object"
+        },
+        "directories": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Directories",
+          "type": "array"
+        }
+      },
+      "title": "FileState",
+      "type": "object"
+    },
+    "FilesystemState": {
+      "additionalProperties": false,
+      "properties": {
+        "domain": {
+          "const": "filesystem",
+          "default": "filesystem",
+          "title": "Domain",
+          "type": "string"
+        },
+        "scopes": {
+          "additionalProperties": {
+            "$ref": "#/$defs/FileState"
+          },
+          "propertyNames": {
+            "enum": [
+              "primary",
+              "secondary"
+            ]
+          },
+          "title": "Scopes",
+          "type": "object"
+        }
+      },
+      "required": [
+        "scopes"
+      ],
+      "title": "FilesystemState",
+      "type": "object"
+    },
+    "GitState": {
+      "additionalProperties": false,
+      "properties": {
+        "base": {
+          "additionalProperties": {
+            "type": "string"
+          },
+          "title": "Base",
+          "type": "object"
+        },
+        "files": {
+          "additionalProperties": {
+            "type": "string"
+          },
+          "title": "Files",
+          "type": "object"
+        },
+        "index": {
+          "additionalProperties": {
+            "type": "string"
+          },
+          "title": "Index",
+          "type": "object"
+        },
+        "head": {
+          "default": "main",
+          "enum": [
+            "main",
+            "topic"
+          ],
+          "title": "Head",
+          "type": "string"
+        },
+        "branches": {
+          "default": [
+            "main"
+          ],
+          "items": {
+            "enum": [
+              "main",
+              "topic"
+            ],
+            "type": "string"
+          },
+          "title": "Branches",
+          "type": "array"
+        },
+        "tags": {
+          "items": {
+            "const": "v1",
+            "type": "string"
+          },
+          "title": "Tags",
+          "type": "array"
+        },
+        "commits": {
+          "default": [
+            "base"
+          ],
+          "items": {
+            "enum": [
+              "base",
+              "skillshift"
+            ],
+            "type": "string"
+          },
+          "title": "Commits",
+          "type": "array"
+        }
+      },
+      "required": [
+        "base",
+        "files",
+        "index"
+      ],
+      "title": "GitState",
+      "type": "object"
+    },
+    "HTTPState": {
+      "additionalProperties": false,
+      "properties": {
+        "domain": {
+          "const": "mock_http_api",
+          "default": "mock_http_api",
+          "title": "Domain",
+          "type": "string"
+        },
+        "scopes": {
+          "additionalProperties": {
+            "$ref": "#/$defs/APIState"
+          },
+          "propertyNames": {
+            "enum": [
+              "primary",
+              "secondary"
+            ]
+          },
+          "title": "Scopes",
+          "type": "object"
+        }
+      },
+      "required": [
+        "scopes"
+      ],
+      "title": "HTTPState",
+      "type": "object"
+    },
+    "Metadata": {
+      "additionalProperties": false,
+      "properties": {
+        "benchmark_version": {
+          "const": "0.1",
+          "default": "0.1",
+          "title": "Benchmark Version",
+          "type": "string"
+        },
+        "family_id": {
+          "minLength": 1,
+          "pattern": "^[a-z0-9_.-]+$",
+          "title": "Family Id",
+          "type": "string"
+        },
+        "operation": {
+          "minLength": 1,
+          "pattern": "^[a-z0-9_.-]+$",
+          "title": "Operation",
+          "type": "string"
+        },
+        "context_change": {
+          "minLength": 1,
+          "title": "Context Change",
+          "type": "string"
+        },
+        "protected_scopes": {
+          "items": {
+            "enum": [
+              "primary",
+              "secondary"
+            ],
+            "type": "string"
+          },
+          "title": "Protected Scopes",
+          "type": "array"
+        },
+        "display_hint": {
+          "minLength": 1,
+          "title": "Display Hint",
+          "type": "string"
+        },
+        "seed": {
+          "const": 0,
+          "default": 0,
+          "title": "Seed",
+          "type": "integer"
+        },
+        "split": {
+          "const": "unassigned",
+          "default": "unassigned",
+          "title": "Split",
+          "type": "string"
+        }
+      },
+      "required": [
+        "family_id",
+        "operation",
+        "context_change",
+        "display_hint"
+      ],
+      "title": "Metadata",
+      "type": "object"
+    },
+    "RepositoryState": {
+      "additionalProperties": false,
+      "properties": {
+        "domain": {
+          "const": "git_operations",
+          "default": "git_operations",
+          "title": "Domain",
+          "type": "string"
+        },
+        "scopes": {
+          "additionalProperties": {
+            "$ref": "#/$defs/GitState"
+          },
+          "propertyNames": {
+            "enum": [
+              "primary",
+              "secondary"
+            ]
+          },
+          "title": "Scopes",
+          "type": "object"
+        }
+      },
+      "required": [
+        "scopes"
+      ],
+      "title": "RepositoryState",
+      "type": "object"
+    },
+    "RewardRule": {
+      "additionalProperties": false,
+      "properties": {
+        "rule_id": {
+          "const": "exact_action_and_state_v1",
+          "default": "exact_action_and_state_v1",
+          "title": "Rule Id",
+          "type": "string"
+        },
+        "success_reward": {
+          "const": 1,
+          "default": 1,
+          "title": "Success Reward",
+          "type": "integer"
+        },
+        "failure_reward": {
+          "const": -1,
+          "default": -1,
+          "title": "Failure Reward",
+          "type": "integer"
+        },
+        "require_full_state_equality": {
+          "const": true,
+          "default": true,
+          "title": "Require Full State Equality",
+          "type": "boolean"
+        }
+      },
+      "title": "RewardRule",
+      "type": "object"
+    },
+    "SQLState": {
+      "additionalProperties": false,
+      "properties": {
+        "rows": {
+          "additionalProperties": {
+            "type": "string"
+          },
+          "title": "Rows",
+          "type": "object"
+        }
+      },
+      "required": [
+        "rows"
+      ],
+      "title": "SQLState",
+      "type": "object"
+    }
+  },
+  "additionalProperties": false,
+  "properties": {
+    "task_id": {
+      "minLength": 1,
+      "pattern": "^[a-z0-9_.-]+$",
+      "title": "Task Id",
+      "type": "string"
+    },
+    "source_skill_id": {
+      "minLength": 1,
+      "pattern": "^[a-z0-9_.-]+$",
+      "title": "Source Skill Id",
+      "type": "string"
+    },
+    "domain": {
+      "$ref": "#/$defs/Domain"
+    },
+    "transfer_category": {
+      "$ref": "#/$defs/Category"
+    },
+    "natural_language_goal": {
+      "minLength": 1,
+      "title": "Natural Language Goal",
+      "type": "string"
+    },
+    "initial_state": {
+      "discriminator": {
+        "mapping": {
+          "filesystem": "#/$defs/FilesystemState",
+          "git_operations": "#/$defs/RepositoryState",
+          "mock_http_api": "#/$defs/HTTPState",
+          "sql_database": "#/$defs/DatabaseState"
+        },
+        "propertyName": "domain"
+      },
+      "oneOf": [
+        {
+          "$ref": "#/$defs/FilesystemState"
+        },
+        {
+          "$ref": "#/$defs/HTTPState"
+        },
+        {
+          "$ref": "#/$defs/DatabaseState"
+        },
+        {
+          "$ref": "#/$defs/RepositoryState"
+        }
+      ],
+      "title": "Initial State"
+    },
+    "allowed_actions": {
+      "items": {
+        "enum": [
+          "apply_primary",
+          "apply_secondary",
+          "noop"
+        ],
+        "type": "string"
+      },
+      "minItems": 1,
+      "title": "Allowed Actions",
+      "type": "array"
+    },
+    "accepted_actions": {
+      "items": {
+        "enum": [
+          "apply_primary",
+          "apply_secondary",
+          "noop"
+        ],
+        "type": "string"
+      },
+      "minItems": 1,
+      "title": "Accepted Actions",
+      "type": "array"
+    },
+    "expected_final_state": {
+      "discriminator": {
+        "mapping": {
+          "filesystem": "#/$defs/FilesystemState",
+          "git_operations": "#/$defs/RepositoryState",
+          "mock_http_api": "#/$defs/HTTPState",
+          "sql_database": "#/$defs/DatabaseState"
+        },
+        "propertyName": "domain"
+      },
+      "oneOf": [
+        {
+          "$ref": "#/$defs/FilesystemState"
+        },
+        {
+          "$ref": "#/$defs/HTTPState"
+        },
+        {
+          "$ref": "#/$defs/DatabaseState"
+        },
+        {
+          "$ref": "#/$defs/RepositoryState"
+        }
+      ],
+      "title": "Expected Final State"
+    },
+    "reward_rules": {
+      "$ref": "#/$defs/RewardRule"
+    },
+    "severity_if_failed": {
+      "maximum": 1,
+      "minimum": 0,
+      "title": "Severity If Failed",
+      "type": "number"
+    },
+    "fixture_id": {
+      "minLength": 1,
+      "pattern": "^[a-z0-9_.-]+$",
+      "title": "Fixture Id",
+      "type": "string"
+    },
+    "metadata": {
+      "$ref": "#/$defs/Metadata"
+    }
+  },
+  "required": [
+    "task_id",
+    "source_skill_id",
+    "domain",
+    "transfer_category",
+    "natural_language_goal",
+    "initial_state",
+    "allowed_actions",
+    "accepted_actions",
+    "expected_final_state",
+    "reward_rules",
+    "severity_if_failed",
+    "fixture_id",
+    "metadata"
+  ],
+  "title": "TransferTask",
+  "type": "object"
+}

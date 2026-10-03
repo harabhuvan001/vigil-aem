@@ -1,0 +1,503 @@
+{
+  "$defs": {
+    "APIState": {
+      "additionalProperties": false,
+      "properties": {
+        "resources": {
+          "additionalProperties": {
+            "type": "string"
+          },
+          "title": "Resources",
+          "type": "object"
+        },
+        "status": {
+          "default": 0,
+          "maximum": 599,
+          "minimum": 0,
+          "title": "Status",
+          "type": "integer"
+        },
+        "token": {
+          "default": "valid",
+          "enum": [
+            "valid",
+            "expired"
+          ],
+          "title": "Token",
+          "type": "string"
+        },
+        "etag": {
+          "default": 1,
+          "minimum": 1,
+          "title": "Etag",
+          "type": "integer"
+        },
+        "cursor": {
+          "default": 0,
+          "minimum": 0,
+          "title": "Cursor",
+          "type": "integer"
+        },
+        "location": {
+          "default": "",
+          "enum": [
+            "",
+            "/canonical"
+          ],
+          "title": "Location",
+          "type": "string"
+        }
+      },
+      "title": "APIState",
+      "type": "object"
+    },
+    "DatabaseState": {
+      "additionalProperties": false,
+      "properties": {
+        "domain": {
+          "const": "sql_database",
+          "default": "sql_database",
+          "title": "Domain",
+          "type": "string"
+        },
+        "scopes": {
+          "additionalProperties": {
+            "$ref": "#/$defs/SQLState"
+          },
+          "propertyNames": {
+            "enum": [
+              "primary",
+              "secondary"
+            ]
+          },
+          "title": "Scopes",
+          "type": "object"
+        }
+      },
+      "required": [
+        "scopes"
+      ],
+      "title": "DatabaseState",
+      "type": "object"
+    },
+    "Domain": {
+      "enum": [
+        "filesystem",
+        "mock_http_api",
+        "sql_database",
+        "git_operations"
+      ],
+      "title": "Domain",
+      "type": "string"
+    },
+    "FileState": {
+      "additionalProperties": false,
+      "properties": {
+        "files": {
+          "additionalProperties": {
+            "type": "string"
+          },
+          "title": "Files",
+          "type": "object"
+        },
+        "directories": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Directories",
+          "type": "array"
+        }
+      },
+      "title": "FileState",
+      "type": "object"
+    },
+    "FilesystemState": {
+      "additionalProperties": false,
+      "properties": {
+        "domain": {
+          "const": "filesystem",
+          "default": "filesystem",
+          "title": "Domain",
+          "type": "string"
+        },
+        "scopes": {
+          "additionalProperties": {
+            "$ref": "#/$defs/FileState"
+          },
+          "propertyNames": {
+            "enum": [
+              "primary",
+              "secondary"
+            ]
+          },
+          "title": "Scopes",
+          "type": "object"
+        }
+      },
+      "required": [
+        "scopes"
+      ],
+      "title": "FilesystemState",
+      "type": "object"
+    },
+    "GitState": {
+      "additionalProperties": false,
+      "properties": {
+        "base": {
+          "additionalProperties": {
+            "type": "string"
+          },
+          "title": "Base",
+          "type": "object"
+        },
+        "files": {
+          "additionalProperties": {
+            "type": "string"
+          },
+          "title": "Files",
+          "type": "object"
+        },
+        "index": {
+          "additionalProperties": {
+            "type": "string"
+          },
+          "title": "Index",
+          "type": "object"
+        },
+        "head": {
+          "default": "main",
+          "enum": [
+            "main",
+            "topic"
+          ],
+          "title": "Head",
+          "type": "string"
+        },
+        "branches": {
+          "default": [
+            "main"
+          ],
+          "items": {
+            "enum": [
+              "main",
+              "topic"
+            ],
+            "type": "string"
+          },
+          "title": "Branches",
+          "type": "array"
+        },
+        "tags": {
+          "items": {
+            "const": "v1",
+            "type": "string"
+          },
+          "title": "Tags",
+          "type": "array"
+        },
+        "commits": {
+          "default": [
+            "base"
+          ],
+          "items": {
+            "enum": [
+              "base",
+              "skillshift"
+            ],
+            "type": "string"
+          },
+          "title": "Commits",
+          "type": "array"
+        }
+      },
+      "required": [
+        "base",
+        "files",
+        "index"
+      ],
+      "title": "GitState",
+      "type": "object"
+    },
+    "HTTPState": {
+      "additionalProperties": false,
+      "properties": {
+        "domain": {
+          "const": "mock_http_api",
+          "default": "mock_http_api",
+          "title": "Domain",
+          "type": "string"
+        },
+        "scopes": {
+          "additionalProperties": {
+            "$ref": "#/$defs/APIState"
+          },
+          "propertyNames": {
+            "enum": [
+              "primary",
+              "secondary"
+            ]
+          },
+          "title": "Scopes",
+          "type": "object"
+        }
+      },
+      "required": [
+        "scopes"
+      ],
+      "title": "HTTPState",
+      "type": "object"
+    },
+    "Provenance": {
+      "additionalProperties": false,
+      "properties": {
+        "origin": {
+          "const": "synthetic_authored_catalog",
+          "default": "synthetic_authored_catalog",
+          "title": "Origin",
+          "type": "string"
+        },
+        "specification": {
+          "const": "docs/SKILLSHIFT_V0_1.md",
+          "default": "docs/SKILLSHIFT_V0_1.md",
+          "title": "Specification",
+          "type": "string"
+        },
+        "generator_version": {
+          "const": "skillshift_catalog_v1",
+          "default": "skillshift_catalog_v1",
+          "title": "Generator Version",
+          "type": "string"
+        },
+        "license": {
+          "const": "MIT",
+          "default": "MIT",
+          "title": "License",
+          "type": "string"
+        },
+        "seed": {
+          "const": 0,
+          "default": 0,
+          "title": "Seed",
+          "type": "integer"
+        }
+      },
+      "title": "Provenance",
+      "type": "object"
+    },
+    "RepositoryState": {
+      "additionalProperties": false,
+      "properties": {
+        "domain": {
+          "const": "git_operations",
+          "default": "git_operations",
+          "title": "Domain",
+          "type": "string"
+        },
+        "scopes": {
+          "additionalProperties": {
+            "$ref": "#/$defs/GitState"
+          },
+          "propertyNames": {
+            "enum": [
+              "primary",
+              "secondary"
+            ]
+          },
+          "title": "Scopes",
+          "type": "object"
+        }
+      },
+      "required": [
+        "scopes"
+      ],
+      "title": "RepositoryState",
+      "type": "object"
+    },
+    "SQLState": {
+      "additionalProperties": false,
+      "properties": {
+        "rows": {
+          "additionalProperties": {
+            "type": "string"
+          },
+          "title": "Rows",
+          "type": "object"
+        }
+      },
+      "required": [
+        "rows"
+      ],
+      "title": "SQLState",
+      "type": "object"
+    },
+    "SourceContext": {
+      "additionalProperties": false,
+      "properties": {
+        "initial_state": {
+          "discriminator": {
+            "mapping": {
+              "filesystem": "#/$defs/FilesystemState",
+              "git_operations": "#/$defs/RepositoryState",
+              "mock_http_api": "#/$defs/HTTPState",
+              "sql_database": "#/$defs/DatabaseState"
+            },
+            "propertyName": "domain"
+          },
+          "oneOf": [
+            {
+              "$ref": "#/$defs/FilesystemState"
+            },
+            {
+              "$ref": "#/$defs/HTTPState"
+            },
+            {
+              "$ref": "#/$defs/DatabaseState"
+            },
+            {
+              "$ref": "#/$defs/RepositoryState"
+            }
+          ],
+          "title": "Initial State"
+        },
+        "expected_final_state": {
+          "discriminator": {
+            "mapping": {
+              "filesystem": "#/$defs/FilesystemState",
+              "git_operations": "#/$defs/RepositoryState",
+              "mock_http_api": "#/$defs/HTTPState",
+              "sql_database": "#/$defs/DatabaseState"
+            },
+            "propertyName": "domain"
+          },
+          "oneOf": [
+            {
+              "$ref": "#/$defs/FilesystemState"
+            },
+            {
+              "$ref": "#/$defs/HTTPState"
+            },
+            {
+              "$ref": "#/$defs/DatabaseState"
+            },
+            {
+              "$ref": "#/$defs/RepositoryState"
+            }
+          ],
+          "title": "Expected Final State"
+        },
+        "allowed_actions": {
+          "items": {
+            "enum": [
+              "apply_primary",
+              "apply_secondary",
+              "noop"
+            ],
+            "type": "string"
+          },
+          "minItems": 1,
+          "title": "Allowed Actions",
+          "type": "array"
+        },
+        "expected_action": {
+          "enum": [
+            "apply_primary",
+            "apply_secondary",
+            "noop"
+          ],
+          "title": "Expected Action",
+          "type": "string"
+        },
+        "fixture_id": {
+          "minLength": 1,
+          "pattern": "^[a-z0-9_.-]+$",
+          "title": "Fixture Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "initial_state",
+        "expected_final_state",
+        "allowed_actions",
+        "expected_action",
+        "fixture_id"
+      ],
+      "title": "SourceContext",
+      "type": "object"
+    }
+  },
+  "additionalProperties": false,
+  "properties": {
+    "skill_id": {
+      "minLength": 1,
+      "pattern": "^[a-z0-9_.-]+$",
+      "title": "Skill Id",
+      "type": "string"
+    },
+    "domain": {
+      "$ref": "#/$defs/Domain"
+    },
+    "goal": {
+      "minLength": 1,
+      "title": "Goal",
+      "type": "string"
+    },
+    "preconditions": {
+      "items": {
+        "minLength": 1,
+        "type": "string"
+      },
+      "minItems": 1,
+      "title": "Preconditions",
+      "type": "array"
+    },
+    "procedure": {
+      "items": {
+        "minLength": 1,
+        "type": "string"
+      },
+      "minItems": 1,
+      "title": "Procedure",
+      "type": "array"
+    },
+    "postconditions": {
+      "items": {
+        "minLength": 1,
+        "type": "string"
+      },
+      "minItems": 1,
+      "title": "Postconditions",
+      "type": "array"
+    },
+    "source_task_id": {
+      "minLength": 1,
+      "pattern": "^[a-z0-9_.-]+$",
+      "title": "Source Task Id",
+      "type": "string"
+    },
+    "source_context": {
+      "$ref": "#/$defs/SourceContext"
+    },
+    "provenance": {
+      "$ref": "#/$defs/Provenance"
+    },
+    "version": {
+      "const": "0.1",
+      "default": "0.1",
+      "title": "Version",
+      "type": "string"
+    }
+  },
+  "required": [
+    "skill_id",
+    "domain",
+    "goal",
+    "preconditions",
+    "procedure",
+    "postconditions",
+    "source_task_id",
+    "source_context",
+    "provenance"
+  ],
+  "title": "SourceSkill",
+  "type": "object"
+}
