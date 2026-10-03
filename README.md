@@ -69,4 +69,3 @@ actions to real accounts, production databases, or protected files.
 
 The next research milestone is SkillShiftBench v0.1 and the no-memory versus similarity-memory
 baseline. See [experiment protocol](docs/EXPERIMENT_PROTOCOL.md) before implementation.
-

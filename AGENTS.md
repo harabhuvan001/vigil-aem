@@ -36,4 +36,3 @@ Follow docs/EXPERIMENT_PROTOCOL.md. Leave publication epsilon unset until prereg
 The next development task can define SkillShiftBench v0.1 and implement the no-memory versus
 similarity-memory baseline. That work needs explicit benchmark specs, frozen splits, versioned
 prompts, model revisions, and paired-run provenance.
-

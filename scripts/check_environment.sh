@@ -52,4 +52,3 @@ for cmd in curl wget jq gcc g++ psql direnv nvidia-smi; do
     echo "OPTIONAL PRESENT: $cmd" || echo "OPTIONAL MISSING: $cmd"
 done
 exit "$missing"
-

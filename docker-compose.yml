@@ -32,4 +32,3 @@ services:
     restart: "no"
 volumes:
   postgres_data:
-

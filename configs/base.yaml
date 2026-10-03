@@ -4,4 +4,3 @@ log_level: INFO
 tracking_uri: http://localhost:5000
 # Infrastructure illustration only; not a publication threshold.
 transfer_epsilon: 0.01
-

@@ -1,0 +1,127 @@
+vigil-aem/
+|-- analysis/
+|   |-- notebooks/
+|   |   +-- .gitkeep
+|   +-- README.md
+|-- benchmark/
+|   |-- adverse_events/
+|   |   +-- .gitkeep
+|   |-- fixtures/
+|   |   +-- toy_cases.json
+|   |-- schemas/
+|   |   |-- .gitkeep
+|   |   |-- adverse_experience.json
+|   |   |-- execution_record.json
+|   |   |-- skill.json
+|   |   +-- task.json
+|   |-- source_tasks/
+|   |   +-- .gitkeep
+|   |-- transfer_tasks/
+|   |   +-- .gitkeep
+|   +-- README.md
+|-- configs/
+|   |-- base.yaml
+|   |-- experiments.yaml
+|   +-- models.yaml
+|-- data/
+|   |-- processed/
+|   |   +-- .gitkeep
+|   +-- raw/
+|       +-- .gitkeep
+|-- docs/
+|   |-- ARCHITECTURE.md
+|   |-- ASSUMPTIONS.md
+|   |-- CODEX_SETUP.md
+|   |-- DATASET_CARD.md
+|   |-- DEVELOPMENT.md
+|   |-- EXPERIMENT_PROTOCOL.md
+|   |-- LIMITATIONS.md
+|   |-- REPOSITORY_TREE.txt
+|   +-- VALIDATION.md
+|-- experiments/
+|   |-- 01_no_memory.py
+|   |-- 02_similarity_memory.py
+|   |-- 03_preconditions.py
+|   |-- 04_harm_predictor.py
+|   |-- 05_verification.py
+|   |-- 06_aem.py
+|   |-- README.md
+|   +-- smoke_mlflow.py
+|-- results/
+|   +-- .gitkeep
+|-- scripts/
+|   |-- check_environment.sh
+|   |-- export_schemas.py
+|   |-- init_pgvector.sql
+|   |-- mock_api_server.py
+|   |-- setup.sh
+|   |-- start_services.sh
+|   |-- stop_services.sh
+|   +-- test_all.sh
+|-- src/
+|   +-- vigil/
+|       |-- aem/
+|       |   |-- __init__.py
+|       |   |-- decay.py
+|       |   |-- schema.py
+|       |   +-- severity.py
+|       |-- agent/
+|       |   |-- __init__.py
+|       |   |-- base.py
+|       |   +-- executor.py
+|       |-- evaluation/
+|       |   |-- __init__.py
+|       |   |-- counterfactual.py
+|       |   |-- metrics.py
+|       |   +-- statistics.py
+|       |-- governor/
+|       |   |-- __init__.py
+|       |   |-- applicability.py
+|       |   |-- policy.py
+|       |   |-- risk.py
+|       |   +-- shift.py
+|       |-- sandbox/
+|       |   |-- __init__.py
+|       |   |-- base.py
+|       |   |-- filesystem.py
+|       |   |-- git_env.py
+|       |   |-- mock_api.py
+|       |   +-- sql.py
+|       |-- skills/
+|       |   |-- __init__.py
+|       |   |-- retriever.py
+|       |   |-- schema.py
+|       |   +-- store.py
+|       |-- utils/
+|       |   |-- __init__.py
+|       |   |-- config.py
+|       |   |-- logging.py
+|       |   |-- seeds.py
+|       |   +-- version.py
+|       +-- __init__.py
+|-- tests/
+|   |-- fixtures/
+|   |   +-- .gitkeep
+|   |-- integration/
+|   |   +-- test_toy_benchmark.py
+|   +-- unit/
+|       |-- test_applicability.py
+|       |-- test_config.py
+|       |-- test_counterfactual.py
+|       |-- test_metrics.py
+|       |-- test_sandboxes.py
+|       |-- test_schemas.py
+|       |-- test_seeds.py
+|       +-- test_version.py
+|-- .env.example
+|-- .envrc.example
+|-- .gitattributes
+|-- .gitignore
+|-- .python-version
+|-- AGENTS.md
+|-- LICENSE
+|-- Makefile
+|-- README.md
+|-- docker-compose.yml
+|-- pyproject.toml
++-- uv.lock

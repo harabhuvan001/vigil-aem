@@ -5,4 +5,3 @@ command -v uv >/dev/null || { echo "Install uv using the official Astral install
 uv python install 3.11
 uv sync --locked
 bash scripts/check_environment.sh
-

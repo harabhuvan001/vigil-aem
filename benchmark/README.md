@@ -7,4 +7,3 @@ regenerate with `uv run --locked python scripts/export_schemas.py`.
 
 The source_tasks, transfer_tasks, and adverse_events directories are placeholders. Future
 benchmark development must freeze ground truth, family splits, annotation provenance and licenses.
-
