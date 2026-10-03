@@ -1,5 +1,7 @@
 """Infrastructure smoke log only. Dummy values are not scientific research results."""
 
+import io
+import sys
 from pathlib import Path
 
 import mlflow
@@ -11,6 +13,9 @@ from vigil.utils.version import capture_versions
 
 
 def main() -> None:
+    # MLflow prints Unicode run links; Windows redirected stdout may default to cp1252.
+    if isinstance(sys.stdout, io.TextIOWrapper):
+        sys.stdout.reconfigure(encoding="utf-8")
     root = Path(__file__).resolve().parents[1]
     config = load_config(root / "configs/base.yaml")
     configure_logging(config.log_level)
