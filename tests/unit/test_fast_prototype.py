@@ -12,8 +12,8 @@ from pydantic import ValidationError
 from vigil.aem.memory import AdverseExperienceMemory, AdverseMemoryEvent
 from vigil.agent.policy import choose_action, goal_action
 from vigil.benchmark.dataset import load_corpus
-from vigil.benchmark.schema import Category
-from vigil.evaluation.prototype import Recorder, transfer_label
+from vigil.benchmark.schema import Category, Domain
+from vigil.evaluation.prototype import Recorder, execute_governed, transfer_label
 from vigil.evaluation.prototype_schema import (
     PrototypeConfig,
     digest,
@@ -22,7 +22,7 @@ from vigil.evaluation.prototype_schema import (
     public_view,
 )
 from vigil.evaluation.statistics import paired_statistics
-from vigil.evaluation.validate_artifacts import validate_results
+from vigil.evaluation.validate_artifacts import equal_metrics, validate_results
 from vigil.governor.applicability import inspect_preconditions
 from vigil.governor.policy import risk_decision
 from vigil.governor.risk import FEATURES, predictor_metrics, train_predictors
@@ -219,3 +219,30 @@ def test_reset_clone_evaluation_and_ledger_are_environment_derived(tmp_path):
 def test_artifact_validator_rejects_incomplete_results(tmp_path):
     with pytest.raises(ValueError, match="Missing/empty"):
         validate_results(tmp_path, ROOT)
+
+
+def test_artifact_metrics_preserve_undefined_denominators_across_formats():
+    assert equal_metrics(pd.Series([None, None]), pd.Series([np.nan, np.nan]))
+    assert equal_metrics(pd.Series([None, 0.5]), pd.Series([np.nan, 0.5]))
+    assert not equal_metrics(pd.Series([None, 0.5]), pd.Series([0.0, 0.5]))
+
+
+@pytest.mark.parametrize("domain", list(Domain))
+@pytest.mark.parametrize("category", [Category.EXACT, Category.NEGATIVE])
+def test_uncertain_verification_executes_an_independent_candidate(domain, category, tmp_path):
+    # Explicit unit injection exercises VERIFY even when measured calibrated risks are extreme.
+    # This unit control is never exported as an experimental result.
+    task = next(t for t in TASKS if t.domain == domain and t.transfer_category == category)
+    skill = next(s for s in SKILLS if s.skill_id == task.source_skill_id)
+    recorder = Recorder(tmp_path, FIXTURES, CONFIG, "unit-checksum", "unit-commit", False)
+    result = execute_governed(
+        task, skill, 1.0, 0.5, 0.5, "S5", "unit", {"low": 0.4, "high": 0.9}, recorder
+    )
+    assert result["verified"] and result["decision"] == "VERIFY"
+    assert result["success"]
+    assert result["candidate_used"] is (category == Category.EXACT)
+    assert len(recorder.trials) == 2
+    verification = recorder.trials[f"verify-unit:S5:{task.task_id}"]
+    execution = recorder.trials[f"unit:S5:{task.task_id}"]
+    assert verification.initial_state_hash == execution.initial_state_hash
+    assert verification.success is (category == Category.EXACT)

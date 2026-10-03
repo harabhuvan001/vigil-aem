@@ -1,6 +1,8 @@
 # Future experiment protocol
 
-No comparative research experiment has been run. These are requirements for later work.
+The deterministic fast prototype follows the exploratory plan in
+[FAST_PROTOTYPE_PROTOCOL.md](FAST_PROTOTYPE_PROTOCOL.md). It does not establish LLM behavior or
+publication results. The following requirements remain applicable to future comparative work.
 
 1. State the hypothesis, experiment, primary metric, ablation, and analysis plan for every component.
 2. Freeze the LLM weights/API model identifier and revision during a comparative experiment.
@@ -20,7 +22,8 @@ No comparative research experiment has been run. These are requirements for late
 9. Report sample sizes, paired reward deltas, HELP/NEUTRAL/HARM classification, confidence intervals,
    harm precision/recall and calibration where relevant, and severity-weighted repeated failure rates.
    Define the resampling unit and account for family clustering; do not treat correlated repetitions
-   as independent tasks. Statistical routines are not yet implemented.
+   as independent tasks. The prototype implements source-skill cluster bootstrap and sign-flip
+   tests plus exact McNemar with an explicit within-family dependence caveat.
 10. Never alter ground truth after viewing test performance. Freeze and version annotations; legitimate
     corrections require an auditable new dataset version and evaluation disclosure.
 11. Keep observed results, expected hypotheses, illustrative examples, and external literature results

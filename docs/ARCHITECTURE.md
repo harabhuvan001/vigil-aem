@@ -1,8 +1,10 @@
 # Architecture
 
-Status: **environment/bootstrap phase**. The research flow below is planned, not experimentally
-validated. Schemas and deterministic infrastructure checks exist; no autonomous agent, trained
-harm predictor, learned retrieval, or memory update rule exists yet.
+Status: **deterministic prototype**. SkillShiftBench-v0.1 and a fixed-policy experimental
+pipeline are implemented. No autonomous LLM agent has been evaluated. The exploratory experiment
+contract and hypothesis/metric/ablation mapping are frozen in
+[FAST_PROTOTYPE_PROTOCOL.md](FAST_PROTOTYPE_PROTOCOL.md). Measured conclusions and their limits
+are recorded in [CLAIMS_AND_EVIDENCE.md](CLAIMS_AND_EVIDENCE.md).
 
 ```text
 Task
@@ -46,8 +48,25 @@ and ablations before evaluating a frozen test set. Update this table as hypothes
   initial state, re-seeds each condition, and records WITH_SKILL / WITHOUT_SKILL.
 - `utils/`: validated configuration, seed logging, and environment/package/Git/model provenance.
 
-Other requested modules are marked **planned**. Experiment entry points 01–06 exit with a
-planned-experiment message rather than returning invented research results.
+The original numbered experiment entry points 01–06 remain planned. The separate
+`experiments/fast_prototype.py` entry point executes the authorized deterministic experiment:
+
+- `benchmark/`: frozen 40-skill, 200-target JSONL corpus with executable reset fixtures.
+- `agent/policy.py`: fixed goal interpreter and similarity-gated source-preference baseline.
+- `sandbox/skillshift.py`: shared reset/observe/execute/evaluate/clone contract using temporary
+  files and Git repositories, in-memory SQLite, and an in-process mock API.
+- `governor/`: factual applicability and shift features, classical harm prediction, calibrated
+  risk decisions, and independent sandbox verification.
+- `aem/memory.py`: validated AdverseExperienceMemory with naive, severity-only, and
+  counterfactual causal/reliability admission and retrieval weighting.
+- `evaluation/prototype.py`: immutable paired execution ledger and S0–S8 ablations.
+- `evaluation/run_prototype.py`, `reporting.py`, `validate_artifacts.py`: validation-only model
+  selection, held-out evaluation, reports, figures, and reward/artifact recomputation.
+
+These finite action environments execute real isolated resources; they do not sandbox arbitrary
+code. Ground-truth fields are excluded from policy and predictor views. Only the evaluator and
+explicit verifier use target postconditions. Learned nearest-neighbor candidate retrieval,
+generative agent reasoning, and external benchmark generalization remain unimplemented.
 
 ## Transfer quantity
 

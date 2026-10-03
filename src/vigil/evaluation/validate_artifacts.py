@@ -10,6 +10,7 @@ import numpy as np
 import pandas as pd
 from PIL import Image
 
+from vigil.aem.memory import AdverseMemoryEvent
 from vigil.benchmark.catalog import STATE_ADAPTER
 from vigil.benchmark.dataset import checksum_bytes, load_corpus, verify_checksums
 from vigil.evaluation.prototype import Trial, summarize_aem, summarize_systems, transfer_label
@@ -50,6 +51,17 @@ REQUIRED = [
 ]
 
 
+def equal_metrics(left: pd.Series, right: pd.Series) -> bool:
+    """Treat an undefined rate consistently across object-Parquet and numeric-CSV dtypes."""
+    return bool(
+        np.allclose(
+            left.to_numpy(dtype=float, na_value=np.nan),
+            right.to_numpy(dtype=float, na_value=np.nan),
+            equal_nan=True,
+        )
+    )
+
+
 def validate_results(root: Path, repository: Path) -> dict[str, Any]:
     skills, tasks, _ = load_corpus(repository / "benchmark")
     verify_checksums(repository / "benchmark")
@@ -80,6 +92,24 @@ def validate_results(root: Path, repository: Path) -> dict[str, Any]:
                 raise ValueError("Figure resolution/format is invalid")
             image.verify()
     rows = {record.execution_id: record for record in raw.itertuples()}
+    ledger = [
+        Trial.model_validate_json(line)
+        for line in (root / "execution_ledger.jsonl").read_text(encoding="utf-8").splitlines()
+    ]
+    if {trial.execution_id for trial in ledger} != set(rows):
+        raise ValueError("Raw runs differ from execution ledger identities")
+    for name in ("adverse_memory.json", "control_adverse_memory.json"):
+        for saved_event in json.loads((root / name).read_text(encoding="utf-8")):
+            event = AdverseMemoryEvent.model_validate(saved_event)
+            without, with_skill, replay = [rows[key] for key in event.source_execution_ids]
+            causal = max(0.0, min(1.0, (without.reward - with_skill.reward) / 2))
+            if event.causal_score != causal or event.severity != with_skill.severity:
+                raise ValueError("AEM severity/causality not derived from execution")
+            if event.diagnosis_confidence == 1 and (
+                with_skill.final_state_hash != replay.final_state_hash
+                or without.initial_state_hash != with_skill.initial_state_hash
+            ):
+                raise ValueError("AEM attribution replay mismatch")
     for record in raw.to_dict(orient="records"):
         trial = Trial.model_validate(record)
         task = task_map[trial.task_id]
@@ -154,7 +184,7 @@ def validate_results(root: Path, repository: Path) -> dict[str, Any]:
     expected_systems = summarize_systems(systems, pairs, features, epsilon)
     saved_systems = pd.read_csv(root / "system_comparison.csv")
     for column in ["success", "mean_transfer_gain", "NTR", "PTR", "verification_frequency"]:
-        if not np.allclose(expected_systems[column], saved_systems[column], equal_nan=True):
+        if not equal_metrics(expected_systems[column], saved_systems[column]):
             raise ValueError("System table is not derived from trials")
     controls = pd.read_parquet(root / "aem_controls.parquet")
     for frame in (systems, controls):
@@ -177,7 +207,7 @@ def validate_results(root: Path, repository: Path) -> dict[str, Any]:
         expected_aem = summarize_aem(controls, epsilon)
         saved_aem = pd.read_csv(root / "aem_comparison.csv")
         for column in ["FRR", "CFA", "OAR", "PTR", "NTR", "success"]:
-            if not np.allclose(expected_aem[column], saved_aem[column], equal_nan=True):
+            if not equal_metrics(expected_aem[column], saved_aem[column]):
                 raise ValueError("AEM table is not derived from trials")
     page = (root / "report.html").read_text(encoding="utf-8")
     if (

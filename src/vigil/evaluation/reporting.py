@@ -203,6 +203,7 @@ def generate_reports(
     all_systems = systems[systems.population == "all_descriptive"]
     heldout = systems[systems.population == "held_out_test"]
     baseline = all_systems.set_index("system")
+    test_baseline = heldout.set_index("system")
     s1 = baseline.loc["S1"]
     s5 = baseline.loc["S5"]
     test_metrics = learning["held_out_test"]
@@ -230,13 +231,17 @@ def generate_reports(
         },
         {
             "claim": "Risk-aware governance reduces harmful reuse versus S1 in this baseline",
-            "experiment": "S1 versus S5 executed ablation",
-            "metric": "NTR difference S5 minus S1",
-            "measured_result": number(float(s5.NTR - s1.NTR)),
+            "experiment": "S1 versus S5 executed held-out ablation",
+            "metric": "Held-out NTR difference S5 minus S1",
+            "measured_result": number(
+                float(test_baseline.loc["S5", "NTR"] - test_baseline.loc["S1", "NTR"])
+            ),
             "artifact": "system_comparison.csv",
             "limitation": "Goal constraints directly reveal applicability; selected predictor "
             "may duplicate a factual gate",
-            "status": "SUPPORTED" if s5.NTR < s1.NTR else "UNSUPPORTED",
+            "status": "SUPPORTED"
+            if test_baseline.loc["S5", "NTR"] < test_baseline.loc["S1", "NTR"]
+            else "UNSUPPORTED",
         },
         {
             "claim": "The selected predictor discriminates HARM on held-out source skills",
@@ -492,9 +497,72 @@ def generate_reports(
         "trials and their seed execution.\n\n"
     )
     report += "## 7. Ablations and claims\n\n" + markdown_table(pd.DataFrame(claims))
+    statistics = json.loads((output / "statistics.json").read_text(encoding="utf-8"))
+    effect_rows = []
+    for experiment, row in statistics.items():
+        effect_rows.append(
+            {
+                "experiment": experiment,
+                "families": row["cluster_count"],
+                "tasks": row["task_count"],
+                "mean_reward_effect": row["mean_reward_effect"],
+                "cluster_bootstrap_95_CI": "["
+                + ", ".join(number(v) for v in row["bootstrap_95_ci"])
+                + "]",
+                "cluster_sign_flip_p": row["paired_cluster_permutation_p"],
+                "task_McNemar_p": row["mcnemar_exact_p"],
+            }
+        )
+    report += (
+        "\nPaired reward effects (exploratory finite-corpus statistics):\n\n"
+        + markdown_table(pd.DataFrame(effect_rows))
+    )
+    report += (
+        "\nThese p-values are descriptive analysis aids, not population significance claims. "
+        "McNemar ignores within-family dependence; the held-out comparison has eight "
+        "synthetic source families.\n\n"
+    )
+    component_rows = []
+    for system, reference in [
+        ("S2", "S1"),
+        ("S3", "S2"),
+        ("S4", "S3"),
+        ("S5", "S4"),
+        ("S6", "S5"),
+        ("S7", "S5"),
+        ("S8", "S5"),
+    ]:
+        component_rows.append(
+            {
+                "comparison": f"{system} versus {reference} (held-out)",
+                "success_difference": test_baseline.loc[system, "success"]
+                - test_baseline.loc[reference, "success"],
+                "NTR_difference": test_baseline.loc[system, "NTR"]
+                - test_baseline.loc[reference, "NTR"],
+                "verification_frequency_difference": test_baseline.loc[
+                    system, "verification_frequency"
+                ]
+                - test_baseline.loc[reference, "verification_frequency"],
+            }
+        )
+    report += (
+        "Observed component additions (zero outcome differences mean no measured improvement):\n\n"
+        + markdown_table(pd.DataFrame(component_rows))
+    )
     report += "\n## 8. Scientific interpretation\n\n### OBSERVED\n\n"
     report += (
         "All numeric observations above were calculated from recorded executions and predictions. "
+    )
+    help_count = int((pairs.label == "HELP").sum())
+    report += (
+        f"Measured labels: {json.dumps(summary['labels'], sort_keys=True)}. "
+        f"HELP count={help_count}. "
+    )
+    if help_count == 0:
+        report += "Its zero denominator leaves PTR unavailable. "
+    report += (
+        f"{summary['raw_executions']} individual executions are recorded, including "
+        f"{summary['forced_control_pairs']} separately identified forced-source control pairs. "
     )
     report += (
         "`statistics.json` supplies paired effects, clustered 95% intervals "
@@ -539,7 +607,15 @@ def generate_reports(
         f"AUROC={number(test_metrics['AUROC'])}, "
         f"AUPRC={number(test_metrics['AUPRC'])}; S5 NTR={number(s5.NTR)}.\n"
         f"AEM: {aem_findings}.\n"
-        "These are deterministic baseline results. Real LLM experiment not "
+        + (
+            "High goal similarity was insufficient to guarantee safe reuse in this policy.\n"
+            if (similarity["high_similarity_harm_rate"] or 0) > 0
+            else "No high-similarity harmful reuse was observed; sufficiency is inconclusive.\n"
+        )
+        + f"Measured HELP opportunities={help_count}; PTR="
+        + number(baseline.loc["S8", "PTR"])
+        + ".\n"
+        + "These are deterministic baseline results. Real LLM experiment not "
         "executed because credentials were unavailable.\n"
         "No-memory macros may leave no measured HELP opportunities; PTR then "
         "is undefined. Small shared "
@@ -594,6 +670,7 @@ def generate_reports(
             f"src='figures/{filename}'>"
         )
     page += "<h2>Conclusions and evidence</h2>" + pd.DataFrame(claims).to_html(index=False)
+    page += "<h2>Exploratory paired effects</h2>" + pd.DataFrame(effect_rows).to_html(index=False)
     page += "<h2>Interpretation</h2><p>" + html.escape(interpretation) + "</p>"
     page += "<h2>Limitations</h2><p>" + html.escape(limitations) + "</p>"
     page += "<h2>Executive summary</h2><pre>" + html.escape(executive) + "</pre></html>"
