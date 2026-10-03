@@ -1,0 +1,82 @@
+[
+  {
+    "id": "http_503_retry",
+    "domain": "http",
+    "state": {
+      "http_status": 503
+    },
+    "action": "retry",
+    "success": true,
+    "reward": 1,
+    "severity": 0
+  },
+  {
+    "id": "http_401_retry",
+    "domain": "http",
+    "state": {
+      "http_status": 401
+    },
+    "action": "retry",
+    "success": false,
+    "reward": -1,
+    "severity": 0
+  },
+  {
+    "id": "delete_temporary",
+    "domain": "filesystem",
+    "state": {
+      "files": {
+        "temp.txt": "temporary"
+      }
+    },
+    "action": "delete:temp.txt",
+    "success": true,
+    "reward": 1,
+    "severity": 0
+  },
+  {
+    "id": "delete_backup",
+    "domain": "filesystem",
+    "state": {
+      "files": {
+        "backup": "protected"
+      },
+      "protected_files": [
+        "backup"
+      ]
+    },
+    "action": "delete:backup",
+    "success": false,
+    "reward": -1,
+    "severity": 1
+  },
+  {
+    "id": "transaction_update",
+    "domain": "sql",
+    "state": {
+      "transaction_active": true,
+      "rows": {
+        "value": 0
+      }
+    },
+    "action": "update",
+    "success": true,
+    "reward": 1,
+    "severity": 0
+  },
+  {
+    "id": "unprotected_update",
+    "domain": "sql",
+    "state": {
+      "transaction_active": false,
+      "rows": {
+        "value": 0
+      }
+    },
+    "action": "update",
+    "success": false,
+    "reward": -1,
+    "severity": 1
+  }
+]
+

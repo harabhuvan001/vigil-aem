@@ -1,0 +1,64 @@
+{
+  "additionalProperties": false,
+  "properties": {
+    "skill_id": {
+      "minLength": 1,
+      "title": "Skill Id",
+      "type": "string"
+    },
+    "goal": {
+      "minLength": 1,
+      "title": "Goal",
+      "type": "string"
+    },
+    "preconditions": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Preconditions",
+      "type": "array"
+    },
+    "procedure": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Procedure",
+      "type": "array"
+    },
+    "postconditions": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Postconditions",
+      "type": "array"
+    },
+    "status": {
+      "default": "draft",
+      "enum": [
+        "draft",
+        "active",
+        "retired"
+      ],
+      "title": "Status",
+      "type": "string"
+    },
+    "success_count": {
+      "default": 0,
+      "minimum": 0,
+      "title": "Success Count",
+      "type": "integer"
+    },
+    "failure_count": {
+      "default": 0,
+      "minimum": 0,
+      "title": "Failure Count",
+      "type": "integer"
+    }
+  },
+  "required": [
+    "skill_id",
+    "goal"
+  ],
+  "title": "Skill",
+  "type": "object"
+}

@@ -1,0 +1,65 @@
+{
+  "$defs": {
+    "JsonValue": {}
+  },
+  "additionalProperties": false,
+  "properties": {
+    "event_id": {
+      "minLength": 1,
+      "title": "Event Id",
+      "type": "string"
+    },
+    "skill_id": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Skill Id"
+    },
+    "context": {
+      "additionalProperties": {
+        "$ref": "#/$defs/JsonValue"
+      },
+      "title": "Context",
+      "type": "object"
+    },
+    "severity": {
+      "maximum": 1,
+      "minimum": 0,
+      "title": "Severity",
+      "type": "number"
+    },
+    "causal_score": {
+      "maximum": 1,
+      "minimum": 0,
+      "title": "Causal Score",
+      "type": "number"
+    },
+    "diagnosis_confidence": {
+      "maximum": 1,
+      "minimum": 0,
+      "title": "Diagnosis Confidence",
+      "type": "number"
+    },
+    "warning_conditions": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Warning Conditions",
+      "type": "array"
+    }
+  },
+  "required": [
+    "event_id",
+    "severity",
+    "causal_score",
+    "diagnosis_confidence"
+  ],
+  "title": "AdverseExperience",
+  "type": "object"
+}
