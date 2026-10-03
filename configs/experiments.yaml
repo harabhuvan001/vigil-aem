@@ -1,0 +1,10 @@
+phase: environment/bootstrap
+publication_epsilon: null
+experiments:
+  - {id: "01", name: no_memory, status: planned}
+  - {id: "02", name: similarity_memory, status: planned}
+  - {id: "03", name: preconditions, status: planned}
+  - {id: "04", name: harm_predictor, status: planned}
+  - {id: "05", name: verification, status: planned}
+  - {id: "06", name: aem, status: planned}
+

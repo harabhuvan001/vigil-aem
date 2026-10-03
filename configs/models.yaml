@@ -1,0 +1,6 @@
+# No model is selected or downloaded during bootstrap.
+model_identifier: null
+model_revision: null
+prompt_version: null
+# Freeze these before comparative experiments.
+

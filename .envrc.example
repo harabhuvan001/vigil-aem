@@ -1,0 +1,6 @@
+# Copy to .envrc and inspect before running direnv allow.
+# No embedded credentials; no automatic network requests.
+dotenv_if_exists .env
+PATH_add .venv/bin
+PATH_add .venv/Scripts
+
